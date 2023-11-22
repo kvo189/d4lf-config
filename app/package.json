@@ -1,13 +1,17 @@
 {
-  "name": "angular-electron",
-  "description": "Angular Electron sample",
+  "name": "d4lf-config",
+  "version": "1.0.0",
+  "description": "Generate configuration files for d4lf",
   "author": {
-    "name": "Maxime GRIS",
-    "email": "maxime.gris@gmail.com"
+    "name": "kvo189",
+    "email": "kvo189@gmail.com"
   },
-  "version": "13.0.0",
   "main": "main.js",
   "private": true,
   "dependencies": {
+    "ini": "^4.1.1"
+  },
+  "devDependencies": {
+    "@types/ini": "^1.3.33"
   }
 }

@@ -1,5 +1,9 @@
+import { ElectronService } from './../core/services/electron/electron.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { DEFAULT_SETTINGS, Settings } from '../../interfaces/Settings';
+import * as ini from 'ini';
 
 @Component({
   selector: 'app-home',
@@ -8,10 +12,70 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private electronService: ElectronService,
+    private fb: FormBuilder
+  ) { }
+
+  settingsForm = this.fb.group({
+    general: this.fb.group({
+      profiles: [''],
+      run_vision_mode_on_startup: [''],
+      check_chest_tabs: [''],
+      hidden_transparency: [''],
+      local_prefs_path: ['']
+    }),
+    char: this.fb.group({
+      inventory: [''],
+      skill4: [''],
+      skill3: [''],
+      health_pot: ['']
+    }),
+    advanced_options: this.fb.group({
+      run_scripts: [''],
+      run_filter: [''],
+      exit_key: [''],
+      log_lvl: [''],
+      scripts: ['']
+    })
+  });
 
   ngOnInit(): void {
-    console.log('HomeComponent INIT');
+    this.electronService.readConfigFile().then((data) => {
+      console.log(this.settingsForm)
+      console.log('readConfigFile data', data);
+      this.settingsForm.patchValue(data as Settings);
+    }).catch((error) => {
+      console.error('readConfigFile error', error);
+    });
+    // this.loadDefaultSettings();
+  }
+
+  loadDefaultSettings() {
+    // Load default settings
+    this.settingsForm.patchValue(DEFAULT_SETTINGS);
+  }
+
+  saveSettings() {
+    const settings = this.settingsForm.value;
+    const iniData = ini.stringify(settings);
+
+    console.log('Saved Settings:\n' + iniData);
+
+    this.electronService.writeConfigFile(iniData).then(() => {
+      console.log('writeConfigFile -> success');
+    }).catch((error) => {
+      console.error('writeConfigFile -> error', error);
+    });
+  }
+
+  cancelChanges() {
+    this.loadDefaultSettings();
+  }
+
+  resetSettings() {
+    this.settingsForm.reset();
   }
 
 }

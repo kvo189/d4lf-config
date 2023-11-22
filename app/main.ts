@@ -1,6 +1,8 @@
-import {app, BrowserWindow, screen} from 'electron';
+import {app, BrowserWindow, screen, ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as ini from 'ini';
+import { buildMenu } from './menu/menu';
 
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1),
@@ -9,7 +11,7 @@ const args = process.argv.slice(1),
 function createWindow(): BrowserWindow {
 
   const size = screen.getPrimaryDisplay().workAreaSize;
-
+  console.log('window size', size)
   // Create the browser window.
   win = new BrowserWindow({
     x: 0,
@@ -53,12 +55,38 @@ function createWindow(): BrowserWindow {
   return win;
 }
 
+const filePath = path.join(app.getPath('home'), '.d4lf', 'params.ini');
+// Listen for file read request
+ipcMain.handle('read-config', async () => {
+  try {
+    const data = fs.readFileSync(filePath, 'utf8');
+    const parsedData = ini.parse(data);
+    return parsedData;
+  } catch (error) {
+    console.error('Read Error:', error);
+    throw error;
+  }
+});
+// Listen for file write request
+ipcMain.handle('write-config', async (_, data) => {
+  try {
+    fs.writeFileSync(filePath, data, 'utf8');
+  } catch (error) {
+    console.error('Write Error:', error);
+    throw error;
+  }
+});
+
 try {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
-  app.on('ready', () => setTimeout(createWindow, 400));
+  app.on('ready', () => setTimeout(() => {
+    createWindow();
+    // console.log(Menu.getApplicationMenu())
+    buildMenu();
+  }, 400));
 
   // Quit when all windows are closed.
   app.on('window-all-closed', () => {

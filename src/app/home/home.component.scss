@@ -1,3 +1,49 @@
 :host {
-  
+
+}
+
+.nav-link {
+  color: #fff;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.tab-content {
+  padding: 16px;
+}
+
+.buttons-container {
+  padding: 1rem 0;
+  position: absolute;
+  margin: auto;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-group-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px
+}
+
+.form-group {
+  display: flex;
+  > label {
+    font-size: 1.125rem;
+    width: 50%;
+  }
+  > .form-control {
+    width: 50%;
+  }
+  gap: 8px;
 }

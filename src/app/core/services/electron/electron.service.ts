@@ -53,4 +53,12 @@ export class ElectronService {
   get isElectron(): boolean {
     return !!(window && window.process && window.process.type);
   }
+
+  async readConfigFile() {
+    return await this.ipcRenderer.invoke('read-config');
+  }
+
+  async writeConfigFile(data: string) {
+    return await this.ipcRenderer.invoke('write-config', data);
+  }
 }
