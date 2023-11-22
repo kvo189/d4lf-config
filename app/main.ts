@@ -54,12 +54,16 @@ function createWindow(): BrowserWindow {
 
   return win;
 }
+// params.ini path
+const settingsPath = path.join(app.getPath('home'), '.d4lf', 'params.ini');
 
-const filePath = path.join(app.getPath('home'), '.d4lf', 'params.ini');
+// profiles directory path
+const profilesDir = path.join(app.getPath('home'), '.d4lf', 'profiles');
+
 // Listen for file read request
 ipcMain.handle('read-config', async () => {
   try {
-    const data = fs.readFileSync(filePath, 'utf8');
+    const data = fs.readFileSync(settingsPath, 'utf8');
     const parsedData = ini.parse(data);
     return parsedData;
   } catch (error) {
@@ -67,12 +71,24 @@ ipcMain.handle('read-config', async () => {
     throw error;
   }
 });
+
 // Listen for file write request
 ipcMain.handle('write-config', async (_, data) => {
   try {
-    fs.writeFileSync(filePath, data, 'utf8');
+    fs.writeFileSync(settingsPath, data, 'utf8');
   } catch (error) {
     console.error('Write Error:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('list-profile-files', async () => {
+  try {
+    const files = fs.readdirSync(profilesDir)
+      .filter(file => file.endsWith('.yaml') || file.endsWith('.yml')); // Only YAML files
+    return files;
+  } catch (error) {
+    console.error('Directory Read Error:', error);
     throw error;
   }
 });

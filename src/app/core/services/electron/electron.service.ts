@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Injectable } from '@angular/core';
 
 // If you import a module but never use any of the imported values other than as TypeScript types,
@@ -54,11 +55,15 @@ export class ElectronService {
     return !!(window && window.process && window.process.type);
   }
 
-  async readConfigFile() {
+  async readConfigFile(): Promise<any> {
     return await this.ipcRenderer.invoke('read-config');
   }
 
-  async writeConfigFile(data: string) {
+  async writeConfigFile(data: string): Promise<any> {
     return await this.ipcRenderer.invoke('write-config', data);
+  }
+
+  getProfileFiles(): Promise<string[]> {
+    return this.ipcRenderer.invoke('list-profile-files');
   }
 }

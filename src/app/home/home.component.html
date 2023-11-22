@@ -1,8 +1,15 @@
 <div class="container">
   <!-- <h1 class="text-center">Diablo 4 Loot Filter</h1> -->
   <h2 class="text-center m-0 py-4">Settings</h2>
-  <form [formGroup]="settingsForm" (ngSubmit)="saveSettings()">
 
+  <div class="py-4">
+    <label for="profiles-select">Available Profiles</label>
+    <select id="profiles-select" class="form-control" [(ngModel)]="selectedProfile">
+      <option *ngFor="let file of profileFiles" [value]="file">{{ file }}</option>
+    </select>
+  </div>
+
+  <form [formGroup]="settingsForm" (ngSubmit)="saveSettings()">
     <ul ngbNav #nav="ngbNav" class="nav-tabs">
       <li ngbNavItem>
         <a ngbNavLink>General</a>
@@ -14,7 +21,7 @@
             </div>
             <div class="form-group">
               <label>Check Chest Tabs</label>
-              <input formControlName="check_chest_tabs" type="number" class="form-control">
+              <input formControlName="check_chest_tabs" type="number" class="form-control" min="0" max="5">
             </div>
             <div class="form-group">
               <label>Hidden Transparency</label>
@@ -73,10 +80,10 @@
             <div class="form-group">
               <label>Log Level</label>
               <select formControlName="log_lvl" class="form-control">
-                <option value="info">Info</option>
-                <option value="warn">Warn</option>
-                <option value="error">Error</option>
-                <option value="debug">Debug</option>
+                <option value="info">info</option>
+                <option value="warn">warn</option>
+                <option value="error">error</option>
+                <option value="debug">debug</option>
               </select>
             </div>
             <div class="form-group">
@@ -88,11 +95,11 @@
       </li>
     </ul>
     <div [ngbNavOutlet]="nav"></div>
-
     <div class="buttons-container">
       <button class="btn btn-primary">Save</button>
       <button class="btn btn-secondary">Cancel</button>
       <button type="button" class="btn btn-warning">Reset settings</button>
     </div>
   </form>
+
 </div>

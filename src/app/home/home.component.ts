@@ -12,6 +12,9 @@ import * as ini from 'ini';
 })
 export class HomeComponent implements OnInit {
 
+  profileFiles: string[] = [];
+  selectedProfile = '';
+
   constructor(
     private router: Router,
     private electronService: ElectronService,
@@ -42,13 +45,8 @@ export class HomeComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.electronService.readConfigFile().then((data) => {
-      console.log(this.settingsForm)
-      console.log('readConfigFile data', data);
-      this.settingsForm.patchValue(data as Settings);
-    }).catch((error) => {
-      console.error('readConfigFile error', error);
-    });
+    this.readConfigFile();
+    this.getProfileFiles();
     // this.loadDefaultSettings();
   }
 
@@ -76,6 +74,30 @@ export class HomeComponent implements OnInit {
 
   resetSettings() {
     this.settingsForm.reset();
+  }
+
+  getProfileFiles() {
+    this.electronService.getProfileFiles().then(files => {
+      console.log('Profile Files:', files);
+      // Use 'files' to populate the available profiles
+      this.profileFiles = files;
+      // Optionally set a default selected profile
+      if (files.length > 0) {
+        this.selectedProfile = files[0];
+      }
+    }).catch(error => {
+      console.error('Error getting profile files:', error);
+    });
+  }
+
+  readConfigFile() {
+    this.electronService.readConfigFile().then((data) => {
+      console.log(this.settingsForm)
+      console.log('readConfigFile data', data);
+      this.settingsForm.patchValue(data as Settings);
+    }).catch((error) => {
+      console.error('readConfigFile error', error);
+    });
   }
 
 }
