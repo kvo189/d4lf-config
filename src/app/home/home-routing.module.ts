@@ -1,12 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
-import { HomeComponent } from './home.component';
+import { ProfilesEditorComponent } from './components/profiles-editor/profiles-editor.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 const routes: Routes = [
   {
-    path: 'home',
-    component: HomeComponent
+    path: 'settings',
+    component: SettingsComponent,
+  },
+  {
+    path: 'profiles',
+    component: ProfilesEditorComponent
   }
 ];
 

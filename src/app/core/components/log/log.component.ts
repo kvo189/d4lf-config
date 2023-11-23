@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewChecked, ChangeDetectionStrategy, Component, ElementRef, Renderer2, signal, ViewChild } from '@angular/core';
+import { AfterViewChecked, ChangeDetectionStrategy, Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { LogService } from '../../services/log/log.service';
 
 @Component({

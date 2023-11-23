@@ -7,7 +7,6 @@ import { LogComponent } from './components/log/log.component';
   providers: [DatePipe],
   imports: [
     CommonModule,
-    LogComponent
   ]
 })
 export class CoreModule { }

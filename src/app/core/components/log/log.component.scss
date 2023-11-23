@@ -1,20 +1,12 @@
 :host {
   display: block;
-  position: fixed;
-  width: 100%;
-  bottom: 0;
-}
-
-.logs-btn {
-  position: fixed;
-  left: 4px;
-  top: 4px;
-  z-index: 5000;
-  font-size: .75rem;
+  // position: fixed;
+  // width: 100%;
+  // bottom: 0;
 }
 
 .logs-container {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   background-color: rgba($color: black, $alpha: 0.75);
@@ -27,6 +19,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  z-index: 1000;
   &.show {
     visibility: visible;
   }

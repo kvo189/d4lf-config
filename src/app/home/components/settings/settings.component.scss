@@ -1,5 +1,5 @@
 :host {
-
+  display: block;
 }
 
 .nav-link {
@@ -19,8 +19,8 @@
 
 .buttons-container {
   padding: 1rem 0;
-  position: absolute;
-  margin: auto;
+  // position: absolute;
+  margin-top: auto;
   width: 100%;
   bottom: 0;
   left: 0;

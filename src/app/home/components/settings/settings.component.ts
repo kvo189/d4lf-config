@@ -1,23 +1,24 @@
-import { ElectronService } from './../core/services/electron/electron.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
-import { FileService } from '../core/services/file/file.service';
 import { Subject, takeUntil } from 'rxjs';
-import { Settings } from '../../interfaces/Settings';
+import { Settings } from '../../../../interfaces/Settings';
+import { ElectronService } from '../../../core/services';
+import { FileService } from '../../../core/services/file/file.service';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  selector: 'app-settings',
+  templateUrl: './settings.component.html',
+  styleUrls: ['./settings.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class SettingsComponent implements OnInit {
 
   private destroy$ = new Subject<void>();
   profileFiles: { id: string, name: string }[] = [];
   savedSettings: Settings | null = null;
   settingsForm = this.fb.group({
     general: this.fb.group({
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       profiles: [[]] as string[][], // Initialize as a FormArray ,
       run_vision_mode_on_startup: [''],
       check_chest_tabs: [''],
@@ -90,6 +91,7 @@ export class HomeComponent implements OnInit {
   }
 
   formSettings(settings: Settings) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return {
       ...settings,
       general: {
@@ -98,5 +100,4 @@ export class HomeComponent implements OnInit {
       }
     }
   }
-
 }

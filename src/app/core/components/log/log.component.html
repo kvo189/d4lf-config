@@ -1,12 +1,10 @@
 
-<button class="btn btn-secondary btn-sm logs-btn" (click)="toggleShow()">Logs</button>
+<button class="btn btn-secondary" (click)="toggleShow()">Logs</button>
 
-<div class="position-relative">
-  <div #logsContainer class="logs-container" [ngClass]="{'show': isLogsShown}">
-    <div *ngFor="let log of logs">
-      <span class="timestamp">{{log.timestamp | date: 'short'}} </span>
-      <span ngClass="{{log.level}}">[{{log.level}}]: {{log.message}}</span>
-      <span *ngIf="log.data"> -> {{log.data}}</span>
-    </div>
+<div #logsContainer class="logs-container" [ngClass]="{'show': isLogsShown}">
+  <div *ngFor="let log of logs">
+    <span class="timestamp">{{log.timestamp | date: 'short'}} </span>
+    <span ngClass="{{log.level}}">[{{log.level}}]: {{log.message}}</span>
+    <span *ngIf="log.data"> -> {{log.data}}</span>
   </div>
 </div>
