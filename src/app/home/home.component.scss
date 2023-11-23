@@ -42,7 +42,8 @@
     font-size: 1.125rem;
     width: 50%;
   }
-  > .form-control {
+  > .form-control,
+  > .ng-select {
     width: 50%;
   }
   gap: 8px;

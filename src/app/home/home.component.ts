@@ -1,9 +1,10 @@
 import { ElectronService } from './../core/services/electron/electron.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { DEFAULT_SETTINGS, Settings } from '../../interfaces/Settings';
-import * as ini from 'ini';
+import { FormBuilder } from '@angular/forms';
+import { FileService } from '../core/services/file/file.service';
+import { Subject, takeUntil } from 'rxjs';
+import { Settings } from '../../interfaces/Settings';
 
 @Component({
   selector: 'app-home',
@@ -12,18 +13,12 @@ import * as ini from 'ini';
 })
 export class HomeComponent implements OnInit {
 
-  profileFiles: string[] = [];
-  selectedProfile = '';
-
-  constructor(
-    private router: Router,
-    private electronService: ElectronService,
-    private fb: FormBuilder
-  ) { }
-
+  private destroy$ = new Subject<void>();
+  profileFiles: { id: string, name: string }[] = [];
+  savedSettings: Settings | null = null;
   settingsForm = this.fb.group({
     general: this.fb.group({
-      profiles: [''],
+      profiles: [[]] as string[][], // Initialize as a FormArray ,
       run_vision_mode_on_startup: [''],
       check_chest_tabs: [''],
       hidden_transparency: [''],
@@ -44,60 +39,64 @@ export class HomeComponent implements OnInit {
     })
   });
 
-  ngOnInit(): void {
-    this.readConfigFile();
-    this.getProfileFiles();
-    // this.loadDefaultSettings();
-  }
+  constructor(
+    private router: Router,
+    private electronService: ElectronService,
+    private fb: FormBuilder,
+    private file: FileService
+  ) { }
 
-  loadDefaultSettings() {
-    // Load default settings
-    this.settingsForm.patchValue(DEFAULT_SETTINGS);
+  ngOnInit(): void {
+    this.file.readConfigFile();
+    this.file.getProfileFiles();
+    this.file.settings$.pipe(takeUntil(this.destroy$)).subscribe(settings => {
+      if (settings) {
+        this.savedSettings = settings;
+        this.settingsForm.reset(this.formSettings(settings));
+      }
+    });
+    this.file.profileFiles$.pipe(takeUntil(this.destroy$)).subscribe(files => {
+      this.profileFiles = files.map(file => {
+        const fileWithoutExt = file.replace(/\.y(a)?ml$/, '');
+        return { id: fileWithoutExt, name: fileWithoutExt };
+      });
+    });
   }
 
   saveSettings() {
-    const settings = this.settingsForm.value;
-    const iniData = ini.stringify(settings);
-
-    console.log('Saved Settings:\n' + iniData);
-
-    this.electronService.writeConfigFile(iniData).then(() => {
-      console.log('writeConfigFile -> success');
-    }).catch((error) => {
-      console.error('writeConfigFile -> error', error);
-    });
+    const settings = this.fileSettings(this.settingsForm.value) as Settings;
+    this.file.saveSettings(settings);
   }
 
   cancelChanges() {
-    this.loadDefaultSettings();
+    if (this.savedSettings) {
+      this.settingsForm.reset(this.formSettings(this.savedSettings));
+    }
   }
 
   resetSettings() {
-    this.settingsForm.reset();
+    this.file.promptCreateConfigFile('Are you sure you want to load the default settings?');
   }
 
-  getProfileFiles() {
-    this.electronService.getProfileFiles().then(files => {
-      console.log('Profile Files:', files);
-      // Use 'files' to populate the available profiles
-      this.profileFiles = files;
-      // Optionally set a default selected profile
-      if (files.length > 0) {
-        this.selectedProfile = files[0];
+  fileSettings(settings: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return {
+      ...settings,
+      general: {
+        ...settings.general,
+        profiles: settings.general.profiles.length ? settings.general.profiles.join(',') : ''
       }
-    }).catch(error => {
-      console.error('Error getting profile files:', error);
-    });
+    }
   }
 
-  readConfigFile() {
-    this.electronService.readConfigFile().then((data) => {
-      console.log(this.settingsForm)
-      console.log('readConfigFile data', data);
-      this.settingsForm.patchValue(data as Settings);
-    }).catch((error) => {
-      console.error('readConfigFile error', error);
-    });
+  formSettings(settings: Settings) {
+    return {
+      ...settings,
+      general: {
+        ...settings.general,
+        profiles: settings.general.profiles ? settings.general.profiles.split(',') : []
+      }
+    }
   }
 
 }

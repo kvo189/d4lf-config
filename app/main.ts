@@ -65,7 +65,7 @@ ipcMain.handle('read-config', async () => {
   try {
     const data = fs.readFileSync(settingsPath, 'utf8');
     const parsedData = ini.parse(data);
-    return parsedData;
+    return { path: settingsPath, data: parsedData};
   } catch (error) {
     console.error('Read Error:', error);
     throw error;

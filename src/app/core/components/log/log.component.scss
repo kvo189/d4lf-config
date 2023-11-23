@@ -1,0 +1,49 @@
+:host {
+  display: block;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+
+.logs-btn {
+  position: fixed;
+  left: 4px;
+  top: 4px;
+  z-index: 5000;
+  font-size: .75rem;
+}
+
+.logs-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: rgba($color: black, $alpha: 0.75);
+  visibility: hidden;
+  overflow-y: auto;
+  height: 300px;
+  max-height: 300px; // Adjust as needed
+  width: 100%;
+  font-size: .75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  &.show {
+    visibility: visible;
+  }
+}
+
+.INFO {
+  color: aqua
+}
+
+.ERROR {
+  color: orangered
+}
+
+.WARNING {
+  color: darkorange
+}
+
+.timestamp {
+  color: darkgray
+}

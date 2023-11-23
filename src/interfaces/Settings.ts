@@ -30,6 +30,7 @@ export interface GeneralSettings {
 export const DEFAULT_SETTINGS: Settings = {
   "general": {
       "profiles": "general,barb,druid,necro,rogue,sorc,uniques",
+      // "profiles": ['general','barb','druid','necro','rogue','sorc','uniques'],
       "run_vision_mode_on_startup": "True",
       "check_chest_tabs": "2",
       "hidden_transparency": "0.35",

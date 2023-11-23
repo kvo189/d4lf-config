@@ -55,7 +55,11 @@ export class ElectronService {
     return !!(window && window.process && window.process.type);
   }
 
-  async readConfigFile(): Promise<any> {
+  async getSettingsPath(): Promise<string> {
+    return await this.ipcRenderer.invoke('get-settings-path');
+  }
+
+  async readConfigFile(): Promise<{ path: string, data: any}> {
     return await this.ipcRenderer.invoke('read-config');
   }
 
