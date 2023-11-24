@@ -1,30 +1,41 @@
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, shareReplay, Subject } from 'rxjs';
 import { DEFAULT_SETTINGS, Settings } from '../../../../interfaces/Settings';
 import { ElectronService } from '../electron/electron.service';
 import { LogService } from '../log/log.service';
 import * as ini from 'ini';
+import { Content, Profile } from '../../../../interfaces/Profile';
+import * as yaml from 'js-yaml';
+import { parse, stringify } from 'yaml'
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileService {
 
-  private _profileFiles: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
-  profileFiles$ = this._profileFiles.asObservable();
+  private _profileNames: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  profileNames$ = this._profileNames.asObservable().pipe(shareReplay(1));
+
+  private _profiles: BehaviorSubject<Profile[]> = new BehaviorSubject<Profile[]>([]);
+  profiles$ = this._profiles.asObservable().pipe(shareReplay(1));
 
   private _selectedFile: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
-  selectedFile$ = this._profileFiles.asObservable();
+  selectedFile$ = this._selectedFile.asObservable().pipe(shareReplay(1));
 
   private _settings: BehaviorSubject<Settings | undefined> = new BehaviorSubject<Settings | undefined>(undefined);
-  settings$ = this._settings.asObservable();
+  settings$ = this._settings.asObservable().pipe(shareReplay(1));
+
+  private _saveProfileEvent= new Subject<{ event: 'success' | 'error', fileName: string }>();
+  saveProfileEvent$ = this._saveProfileEvent.asObservable();
 
   constructor(
     private electronService: ElectronService,
     private toast: ToastrService,
     private log: LogService
-  ) { }
+  ) {
+    // this.getProfileFiles();
+  }
 
 
   readConfigFile() {
@@ -69,17 +80,54 @@ export class FileService {
     });
   }
 
-  getProfileFiles() {
-    this.electronService.getProfileFiles().then(files => {
-      // Use 'files' to populate the available profiles
-      this._profileFiles.next(files);
-      // Optionally set a default selected profile
-      if (files.length > 0) {
-        // this.selectedProfile = files[0];
-      }
-      this.log.info(`Profiles found`, { data: files });
+  readProfiles() {
+    this.electronService.readProfiles().then(profiles => {
+      const profileFiles: string[] = profiles.filter(profile => profile.fileName && profile.content).map((profile: Profile) => {
+        return profile.fileName;
+      })
+      this._profileNames.next(profileFiles);
+      this._profiles.next(profiles as Profile[]);
+      console.log('Profiles detailed', profiles);
+      this.log.info(`${profileFiles.length} Profiles found`, { data: profileFiles, toast: 'success' });
     }).catch(error => {
-      this.log.error(`Error getting profile files`, { data: error });
+      this.log.error(`Error reading profiles`, { data: error, toast: 'error' });
     });
   }
+
+  saveProfile(profileName: string, profileContent: Content, options?: { openOnSave?: boolean }) {
+    const currentProfile = this.profiles.find(profile => profile.fileName === profileName);
+    if (currentProfile) {
+      profileContent = { ...currentProfile.content, ...profileContent };
+    }
+
+    const yamlAspects = profileContent.Aspects ? convertToYaml({ Aspects: profileContent.Aspects }, 2) : '';
+    const yamlAffixes = profileContent.Affixes ? convertToYaml({ Affixes: profileContent.Affixes }, 5) : '';
+    const yamlUniques = profileContent.Uniques ? convertToYaml({ Uniques: profileContent.Uniques }, 3) : '';
+    // console.log('yamlAspects\n', yamlAspects + yamlAffixes + yamlUniques);
+    const yamlString = yamlAspects + yamlAffixes + yamlUniques;
+
+    this.electronService.saveProfile(profileName, yamlString).then(() => {
+      this.log.info(`Saved profile`, { data: profileName, toast: 'success' });
+      this._profiles.next(this.profiles.map(profile => profile.fileName === profileName ? { ...profile, content: profileContent } : profile));
+      if (options?.openOnSave) {
+        return this.electronService.openProfile(profileName).catch(error => {
+          this.log.error(`Error opening profile`, { data: error, toast: 'error' });
+        });
+      }
+    }).catch(error => {
+      this.log.error(`Error saving profile`, { data: error, toast: 'error' });
+    });
+  }
+
+  get profiles(): Profile[] {
+    return this._profiles.value;
+  }
+}
+
+
+function convertToYaml(obj: any, flowLevel = 2) {
+  const options = {
+    flowLevel: flowLevel, // Might need to play around with this
+  };
+  return yaml.dump(obj, options);
 }

@@ -1,0 +1,31 @@
+<div class="d-flex flex-column gap-2 flex-grow-1">
+  <div>Aspects list</div>
+  <form [formGroup]="aspectForm" class="px-2 py-2" style="
+    height: max(50vh, 200px);
+    overflow: auto;
+    border: 2px solid gray;"
+  >
+    <div formArrayName="aspects" class="d-flex flex-column gap-2">
+      <div *ngFor="let aspectGroup of aspectsFormArray.controls; let i = index" [formGroupName]="i" class="d-flex gap-2">
+        <input class="form-control form-control-sm" formControlName="name" placeholder="Aspect Name">
+        <input class="form-control form-control-sm" type="number" formControlName="threshold" placeholder="Threshold">
+        <select class="form-control form-control-sm" formControlName="condition">
+          <option value="">Select Condition</option>
+          <option value="larger">Larger</option>
+          <option value="smaller">Smaller</option>
+        </select>
+        <button type="button" class="btn btn-danger btn-sm" aria-label="Close" (click)="removeAspect(i)">X</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="d-flex justify-content-between pt-2">
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-primary btn-sm" (click)="onSave()" [disabled]="!aspectForm.dirty">Save</button>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="onCancel()" [disabled]="aspectForm.pristine">Cancel</button>
+    </div>
+    <div>
+      <button type="button" class="btn btn-success btn-sm" (click)="addAspect()">New aspect</button>
+    </div>
+  </div>
+</div>

@@ -12,11 +12,13 @@ import { FormsModule } from '@angular/forms';
 import { ProfilesEditorComponent } from './components/profiles-editor/profiles-editor.component';
 import { ShellComponent } from "../shared/components/shell/shell.component";
 import { SettingsComponent } from './components/settings/settings.component';
+import { AspectEditorComponent } from './components/profiles-editor/aspect-editor/aspect-editor.component';
 
 @NgModule({
     declarations: [
         SettingsComponent,
-        ProfilesEditorComponent
+        ProfilesEditorComponent,
+        AspectEditorComponent
     ],
     imports: [
         CommonModule,

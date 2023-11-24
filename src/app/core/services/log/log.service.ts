@@ -1,5 +1,6 @@
 import { ToastrService } from 'ngx-toastr';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 interface LogEntry {
   timestamp: string | Date;
@@ -17,7 +18,9 @@ interface LogOptions {
   providedIn: 'root'
 })
 export class LogService {
-  private logs: LogEntry[] = [];
+  // private logs: LogEntry[] = [];
+  private _logs = new BehaviorSubject<LogEntry[]>([]);
+  readonly logs$ = this._logs.asObservable();
 
   constructor(
     private toast: ToastrService
@@ -55,7 +58,7 @@ export class LogService {
       }
     }
 
-    this.logs.push({ timestamp: new Date(), message: message, level, data: dataString});
+    this._logs.next([...this._logs.value, { timestamp: new Date(), message: message, level, data: dataString}]);
   }
 
   info(message: string, options? : LogOptions): void {
@@ -74,12 +77,8 @@ export class LogService {
     this.addLog(message, 'ERROR', options);
   }
 
-  getLogs(): LogEntry[] {
-    return this.logs;
-  }
-
   clearLogs(): void {
-    this.logs = [];
+    this._logs.next([]);
   }
 
 }

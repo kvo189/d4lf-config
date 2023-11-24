@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
@@ -11,7 +11,7 @@ import { FileService } from '../../../core/services/file/file.service';
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss'],
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
   profileFiles: { id: string, name: string }[] = [];
@@ -47,16 +47,21 @@ export class SettingsComponent implements OnInit {
     private file: FileService
   ) { }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   ngOnInit(): void {
+    this.file.readProfiles();
     this.file.readConfigFile();
-    this.file.getProfileFiles();
     this.file.settings$.pipe(takeUntil(this.destroy$)).subscribe(settings => {
       if (settings) {
         this.savedSettings = settings;
         this.settingsForm.reset(this.formSettings(settings));
       }
     });
-    this.file.profileFiles$.pipe(takeUntil(this.destroy$)).subscribe(files => {
+    this.file.profileNames$.pipe(takeUntil(this.destroy$)).subscribe(files => {
       this.profileFiles = files.map(file => {
         const fileWithoutExt = file.replace(/\.y(a)?ml$/, '');
         return { id: fileWithoutExt, name: fileWithoutExt };

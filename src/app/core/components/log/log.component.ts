@@ -14,9 +14,8 @@ import { LogService } from '../../services/log/log.service';
 })
 export class LogComponent implements AfterViewChecked{
   @ViewChild('logsContainer') private logContainer?: ElementRef;
-  logs = this.log.getLogs();
+  logs$ = this.log.logs$;
   isLogsShown = false;
-
 
   constructor(
     private log: LogService,

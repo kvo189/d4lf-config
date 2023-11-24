@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 // If you import a module but never use any of the imported values other than as TypeScript types,
 // the resulting javascript file will look as if you never imported the module at all.
-import { ipcRenderer, webFrame } from 'electron';
+import { ipcRenderer, webFrame, shell } from 'electron';
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
 
@@ -59,7 +59,7 @@ export class ElectronService {
     return await this.ipcRenderer.invoke('get-settings-path');
   }
 
-  async readConfigFile(): Promise<{ path: string, data: any}> {
+  async readConfigFile(): Promise<{ path: string, data: any }> {
     return await this.ipcRenderer.invoke('read-config');
   }
 
@@ -67,7 +67,36 @@ export class ElectronService {
     return await this.ipcRenderer.invoke('write-config', data);
   }
 
-  getProfileFiles(): Promise<string[]> {
+  async getProfileFiles(): Promise<string[]> {
     return this.ipcRenderer.invoke('list-profile-files');
+  }
+
+  async readProfiles(): Promise<any[]> {
+    try {
+      return await this.ipcRenderer.invoke('read-profiles');
+    } catch (error) {
+      console.error('Error reading profiles:', error);
+      throw error;
+    }
+  }
+
+  async saveProfile(fileName: string, yamlString: string): Promise<boolean> {
+    try {
+      const result = await this.ipcRenderer.invoke('write-profile', fileName, yamlString);
+      return result.success;
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      throw error;
+    }
+  }
+
+  async openProfile(name: string) {
+    try {
+      const result = await this.ipcRenderer.invoke('open-saved-file', name);
+      return result.success;
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      throw error;
+    }
   }
 }

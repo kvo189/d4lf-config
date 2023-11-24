@@ -1,8 +1,11 @@
-import {app, BrowserWindow, screen, ipcMain } from 'electron';
+import { app, BrowserWindow, screen, ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as ini from 'ini';
+import * as yaml from 'js-yaml'
 import { buildMenu } from './menu/menu';
+import { readProfileFiles, writeYamlFile } from './yaml';
+import { openFile } from './openFile';
 
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1),
@@ -36,7 +39,7 @@ function createWindow(): BrowserWindow {
     let pathIndex = './index.html';
 
     if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
-       // Path when running electron in local folder
+      // Path when running electron in local folder
       pathIndex = '../dist/index.html';
     }
 
@@ -65,7 +68,7 @@ ipcMain.handle('read-config', async () => {
   try {
     const data = fs.readFileSync(settingsPath, 'utf8');
     const parsedData = ini.parse(data);
-    return { path: settingsPath, data: parsedData};
+    return { path: settingsPath, data: parsedData };
   } catch (error) {
     console.error('Read Error:', error);
     throw error;
@@ -90,6 +93,29 @@ ipcMain.handle('list-profile-files', async () => {
   } catch (error) {
     console.error('Directory Read Error:', error);
     throw error;
+  }
+});
+
+// IPC event handler
+ipcMain.handle('read-profiles', async () => {
+  return await readProfileFiles(profilesDir);
+});
+
+ipcMain.handle('write-profile', async (event, fileName, yamlString) => {
+  try {
+    await writeYamlFile(path.join(profilesDir, fileName), yamlString);
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: (error as Error).message };
+  }
+});
+
+ipcMain.handle('open-saved-file', async (event, fileName) => {
+  try {
+    await openFile(path.join(profilesDir, fileName));
+    return { success: true };
+  } catch (error) {
+    return { success: false, message: (error as Error).message };
   }
 });
 
