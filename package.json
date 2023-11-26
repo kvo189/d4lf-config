@@ -56,6 +56,7 @@
     "@ng-bootstrap/ng-bootstrap": "15.1.2",
     "@ng-select/ng-select": "11.2.0",
     "@popperjs/core": "^2.11.6",
+    "angular-ng-autocomplete": "2.0.12",
     "bootstrap": "^5.2.3",
     "ini": "4.1.1",
     "js-yaml": "4.1.0",

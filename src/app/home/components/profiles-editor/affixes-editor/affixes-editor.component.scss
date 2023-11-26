@@ -3,7 +3,8 @@
 }
 
 .left-panel {
-  width: 30%; /* Adjust as needed */
+  min-width: 150px;
+  width: 20%; /* Adjust as needed */
   border-right: 1px solid var(--bs-border-color); /* Optional */
   padding: 8px;
   display: flex;
@@ -13,11 +14,21 @@
 }
 
 .right-panel {
-  width: 70%; /* Adjust as needed */
+  width: 80%; /* Adjust as needed */
   padding: 8px;
   overflow: auto;
 }
 
 select:has(option[value=""]:checked) {
   color: gray;
+}
+
+.affixPoolControl {
+  @media screen and (max-width: 768px) {
+    flex-wrap: wrap;
+  }
+}
+
+.form-container {
+  overflow: auto;
 }

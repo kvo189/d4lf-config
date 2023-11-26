@@ -15,25 +15,16 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ProfilesEditorComponent implements OnInit, OnDestroy {
 
-  profileNames$ = this.file.profileNames$.pipe(
-    // tap((profileNames) => {
-    //   if (profileNames.length > 0 && !this._selectedProfile.value) {
-    //     this._selectedProfile.next(profileNames[0]);
-    //   }
-    // })
-  );
-
+  profileNames$ = this.file.profileNames$;
   profiles$ = this.file.profiles$;
   openFileOnSave = false;
 
   private destroy$ = new Subject<void>();
   private _selectedProfile = new BehaviorSubject<string | undefined>(undefined);
-  selectedProfile$ = this._selectedProfile.asObservable().pipe(
-    tap((profile) => console.log('new profile emitted', profile)),
+  readonly selectedProfile$ = this._selectedProfile.asObservable().pipe(
     shareReplay(1),
   );
   selectedProfile: string | undefined = undefined;
-
 
   aspects$: Observable<Aspect[]> = combineLatest([
     this.selectedProfile$,
@@ -88,14 +79,12 @@ export class ProfilesEditorComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.selectedProfile$.pipe(takeUntil(this.destroy$)).subscribe((profile) => {
       this.selectedProfile = profile;
-      this.cdr.detectChanges();
     });
   }
 
   onChangeSelectedProfile(eventTarget: EventTarget) {
     const selectedProfile = (eventTarget as HTMLSelectElement).value;
     this._selectedProfile.next(selectedProfile);
-    this.selectedProfile = selectedProfile;
   }
 
   onAspectsSave(aspects: Aspect[]) {
@@ -161,7 +150,6 @@ export class ProfilesEditorComponent implements OnInit, OnDestroy {
     console.log('changing name...', oldName, newName)
     this.file.saveProfileName(oldName, newName, { openOnSave: this.openFileOnSave }).then(() => {
       this._selectedProfile.next(newName);
-      this.selectedProfile = newName;
     }).catch((error) => {
       throw error
     })
@@ -193,10 +181,8 @@ export class ProfilesEditorComponent implements OnInit, OnDestroy {
             console.log('profiles left', newNames)
             if (newNames.length > 0) {
               this._selectedProfile.next(newNames[0]);
-              this.selectedProfile = newNames[0];
             } else {
               this._selectedProfile.next(undefined);
-              this.selectedProfile = undefined;
             }
           }
         );

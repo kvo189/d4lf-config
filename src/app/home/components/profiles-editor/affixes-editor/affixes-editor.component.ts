@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Affix, Item, ItemGroup, ItemType } from '../../../../../interfaces/Profile';
+import affixesJson from '../../../../../assets/affixes.json';
 
 interface AffixesFormValue {
   itemGroups: {
@@ -27,12 +28,15 @@ export class AffixesEditorComponent implements OnChanges {
 
   @Output() save = new EventEmitter<ItemGroup[]>();
   @Input({ required: true }) itemGroups: ItemGroup[] | null = [];
+  @Input({ required: true }) selectedProfile: string | undefined;
 
   affixesForm = this.fb.group({
     itemGroups: this.fb.array([])
   });
   selectedItemGroupIndex: number | null = null;
   itemTypesArray = Object.entries(ItemType).map(([key, value]) => ({ key, value }));
+
+  aspectKeys: string[] = Object.keys(affixesJson);
 
   constructor(private fb: FormBuilder) {
     this.affixesForm = this.fb.group({

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Aspect } from '../../../../../interfaces/Profile';
+import aspectsJson from '../../../../../assets/aspects.json'
 
 @Component({
   selector: 'app-aspect-editor',
@@ -14,10 +15,16 @@ export class AspectEditorComponent implements OnChanges {
 
   @Output() save = new EventEmitter<Aspect[]>();
   @Input({ required: true }) aspects!: Aspect[] | null;
+  @Input({ required: true }) selectedProfile: string | undefined;
 
   private initialAspects: Aspect[] = []; // Store the initial state of the aspects
 
+  aspectKeys: string[] = Object.keys(aspectsJson);
+
   constructor(private fb: FormBuilder) {
+    console.log(aspectsJson)
+
+    console.log(Object.keys(aspectsJson));
   }
 
   ngOnChanges(changes: SimpleChanges): void {

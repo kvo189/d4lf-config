@@ -16,6 +16,7 @@ import { AspectEditorComponent } from './components/profiles-editor/aspect-edito
 import { AffixesEditorComponent } from './components/profiles-editor/affixes-editor/affixes-editor.component';
 import { UniquesEditorComponent } from './components/profiles-editor/uniques-editor/uniques-editor.component';
 import { ClickOutsideDirective } from '../shared/directives/ClickOutsideDirective';
+import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 
 @NgModule({
     declarations: [
@@ -36,7 +37,8 @@ import { ClickOutsideDirective } from '../shared/directives/ClickOutsideDirectiv
         ToastrModule.forRoot(),
         NgSelectModule,
         FormsModule,
-        ShellComponent
+        ShellComponent,
+        AutocompleteLibModule
     ]
 })
 export class HomeModule { }

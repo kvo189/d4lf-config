@@ -2,9 +2,24 @@
   <form [formGroup]="aspectForm" class="px-2 py-2 form-container">
     <div formArrayName="aspects" class="d-flex flex-column gap-1">
       <div *ngFor="let aspectGroup of aspectsFormArray.controls; let i = index" [formGroupName]="i" class="d-flex gap-1">
-        <input class="form-control form-control-sm" formControlName="name" placeholder="Aspect Name">
-        <input class="form-control form-control-sm" type="number" formControlName="threshold" placeholder="Threshold">
-        <select class="form-control form-control-sm" formControlName="condition">
+        <!-- <input class="form-control form-control-sm" formControlName="name" placeholder="Aspect Name"> -->
+
+        <ng-autocomplete #ngAutoCompleteStatic
+          [data]="aspectKeys"
+          formControlName="name"
+          [initialValue]=""
+          [placeholder]="'Aspect key'"
+          [searchKeyword]="'name'"
+          historyIdentifier="aspectsList"
+          [historyHeading]="'Recently selected'"
+          [historyListMaxNumber]="3"
+          notFoundText="Not found"
+          [itemTemplate]="itemTemplateStatic"
+          class="flex-grow-1">
+        </ng-autocomplete>
+
+        <input class="form-control form-control-sm small-control" type="number" formControlName="threshold" placeholder="Threshold">
+        <select class="form-control form-control-sm small-control" formControlName="condition"  style="width: fit-content;">
           <option value="">Select Condition</option>
           <option value="larger">Larger</option>
           <option value="smaller">Smaller</option>
@@ -20,7 +35,11 @@
       <button type="button" class="btn btn-secondary btn-sm" (click)="onCancel()" [disabled]="aspectForm.pristine">Cancel</button>
     </div>
     <div>
-      <button type="button" class="btn btn-success btn-sm" (click)="addAspect()">New aspect</button>
+      <button type="button" class="btn btn-success btn-sm" [disabled]="!selectedProfile" (click)="addAspect()">New aspect</button>
     </div>
   </div>
 </div>
+
+<ng-template #itemTemplateStatic let-item>
+  <div class="option" [innerHTML]="item"></div>
+</ng-template>
