@@ -60,7 +60,6 @@ export class AspectEditorComponent implements OnChanges {
     const aspects = aspectFormVal.filter((aVal: any) => {
       return aVal.name
     }).map((aspect: any) => {
-      console.log(aspect.name, aspect.threshold, aspect.condition)
       if (aspect.name && aspect.threshold && aspect.condition) {
         return [aspect.name, aspect.threshold, aspect.condition] as Aspect;
       } else if (aspect.name && aspect.threshold) {
@@ -69,7 +68,6 @@ export class AspectEditorComponent implements OnChanges {
         return [aspect.name] as Aspect;
       }
     })
-    console.log('aspectFormVal', aspectFormVal, 'aspects', aspects);
     this.save.emit(aspects);
   }
 

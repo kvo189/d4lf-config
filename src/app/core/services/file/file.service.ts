@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, shareReplay, Subject } from 'rxjs';
+import { BehaviorSubject, shareReplay } from 'rxjs';
 import { DEFAULT_SETTINGS, Settings } from '../../../../interfaces/Settings';
 import { ElectronService } from '../electron/electron.service';
 import { LogService } from '../log/log.service';
 import * as ini from 'ini';
 import { Content, Profile } from '../../../../interfaces/Profile';
 import * as yaml from 'js-yaml';
-import { parse, stringify } from 'yaml'
 
 @Injectable({
   providedIn: 'root'
@@ -26,25 +25,18 @@ export class FileService {
   private _settings: BehaviorSubject<Settings | undefined> = new BehaviorSubject<Settings | undefined>(undefined);
   settings$ = this._settings.asObservable().pipe(shareReplay(1));
 
-  private _saveProfileEvent = new Subject<{ event: 'success' | 'error', fileName: string }>();
-  saveProfileEvent$ = this._saveProfileEvent.asObservable();
-
   constructor(
     private electronService: ElectronService,
     private toast: ToastrService,
     private log: LogService
   ) {
-    // this.getProfileFiles();
+    this.readConfigFile();
+    this.readProfiles();
   }
-
 
   readConfigFile() {
     this.electronService.readConfigFile().then(({ path, data }) => {
       this.log.info(`Existing settings found at ${path}`, { data });
-      // // Check if profiles is a string and transform it into an array
-      // if (data && data.general && typeof data.general.profiles === 'string') {
-      //   data.general.profiles = data.general.profiles.split(',');
-      // }
       this._settings.next(data as Settings);
     }).catch((error) => {
       this.log.error(`Error reading config file`, { data: error });
@@ -60,10 +52,12 @@ export class FileService {
   }
 
   createDefaultConfigFile() {
-    const iniData = ini.stringify(DEFAULT_SETTINGS);
+    const defaultSettings = DEFAULT_SETTINGS;
+    defaultSettings.general.profiles = this._profileNames.value.join(',');
+    const iniData = ini.stringify(defaultSettings);
     this.electronService.writeConfigFile(iniData).then(() => {
       this.log.info('Default config file created', { toast: 'success' });
-      this._settings.next(DEFAULT_SETTINGS);
+      this._settings.next(defaultSettings);
     }).catch(error => {
       this.log.error('Error creating default config file', { data: error });
     });
@@ -82,8 +76,8 @@ export class FileService {
 
   readProfiles() {
     this.electronService.readProfiles().then(profiles => {
-      const profileFiles: string[] = profiles.filter(profile => profile.fileName && profile.content).map((profile: Profile) => {
-        return profile.fileName;
+      const profileFiles: string[] = profiles.filter(profile => profile.fileName).map((profile: Profile) => {
+        return profile.fileName.replace(/\.y(a)?ml$/, '') ;
       })
       this._profileNames.next(profileFiles);
       this._profiles.next(profiles as Profile[]);
@@ -95,6 +89,7 @@ export class FileService {
   }
 
   saveProfile(profileName: string, profileContent: Content, options?: { openOnSave?: boolean }) {
+    profileName = profileName + '.yaml';
     const currentProfile = this.profiles.find(profile => profile.fileName === profileName);
     if (currentProfile) {
       profileContent = { ...currentProfile.content, ...profileContent };
@@ -116,6 +111,50 @@ export class FileService {
       }
     }).catch(error => {
       this.log.error(`Error saving profile`, { data: error, toast: 'error' });
+    });
+  }
+
+  private updateProfileSettings(oldProfileName: string, newProfileName?: string) {
+    if (oldProfileName != null && this._settings.value && this._settings.value.general.profiles.includes(oldProfileName)) {
+      let profilesArr = this._settings.value.general.profiles.split(',');
+      if (newProfileName) {
+        profilesArr = profilesArr.map((profile, index) => {
+          if (profile === oldProfileName) {
+            return profilesArr[index] = newProfileName;
+          }
+          return profile;
+        })
+      } else {
+        profilesArr = profilesArr.filter(profile => profile !== oldProfileName);
+      }
+      this._settings.value.general.profiles = profilesArr.join(',');
+      this.saveSettings(this._settings.value);
+    }
+  }
+
+  saveProfileName(oldName: string, newName: string, options?: { openOnSave?: boolean }) {
+    return this.electronService.saveProfileName(oldName, newName).then(() => {
+      this.log.info(`Profile name saved`, { data: { oldName, newName }, toast: 'success' });
+      this.readProfiles();
+      this.updateProfileSettings(oldName, newName);
+
+      if (options?.openOnSave) {
+        return this.electronService.openProfile(newName  + '.yaml').catch(error => {
+          this.log.error(`Error opening profile`, { data: error, toast: 'error' });
+        });
+      }
+    }).catch((error) =>{
+      this.log.error(`Error saving profile name:`, { data: error, toast: 'error' });
+    });
+  }
+
+  deleteProfile(name: string) {
+    this.electronService.deleteProfile(name).then(() => {
+      this.log.info(`Profile deleted`, { data: name, toast: 'success' });
+      this.readProfiles();
+      this.updateProfileSettings(name)
+    }).catch(error => {
+      this.log.error(`Error deleting profile`, { data: error, toast: 'error' });
     });
   }
 

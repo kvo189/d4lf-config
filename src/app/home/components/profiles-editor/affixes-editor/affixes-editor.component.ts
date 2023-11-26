@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Affix, Item, ItemGroup, ItemType } from '../../../../../interfaces/Profile';
 
@@ -57,7 +57,6 @@ export class AffixesEditorComponent implements OnChanges {
     this.itemGroups.forEach(itemGroup => {
       this.itemGroupsArray.push(this.createItemGroupFormGroup(itemGroup));
     });
-    console.log('affixesForm', this.affixesForm)
   }
 
   private createItemGroupFormGroup(itemGroup: ItemGroup): FormGroup {
@@ -156,7 +155,6 @@ export class AffixesEditorComponent implements OnChanges {
     const newItemGroups: ItemGroup[] = [];
 
     formValue.itemGroups?.forEach((group: { key: string, item: ItemFormValue }) => {
-      console.log('group', group);
       newItemGroups.push({
         [group.key]: {
           itemType: group.item.itemType,
@@ -176,9 +174,6 @@ export class AffixesEditorComponent implements OnChanges {
         }
       })
     })
-
-    console.log('newItemGroups', newItemGroups);
-
     this.save.emit(newItemGroups);
   }
 

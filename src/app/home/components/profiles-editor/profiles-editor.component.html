@@ -4,12 +4,33 @@
   <div class="d-flex flex-column gap-3 flex-grow-1">
 
     <div class="d-flex flex-column gap-2">
-      <div>Select profile:</div>
-      <select class="form-control form-control-sm" name="profile-picker" id="profile-picker" (change)="onChangeSelectedProfile($event.target!)">
-        <option *ngFor="let profileName of profileNames$ | async" [value]="profileName">
-          {{ profileName }}
-        </option>
-      </select>
+      Selected profile:
+      <div class="d-flex gap-2" >
+        <select *ngIf="!isEdittingProfile && !isAddingProfile" class="form-control form-control-sm" name="profile-picker" id="profile-picker"
+        [(ngModel)]="selectedProfile"
+        (change)="onChangeSelectedProfile($event.target!)">
+          <option *ngFor="let profileName of profileNames$ | async" [value]="profileName">
+            {{ profileName }}
+          </option>
+        </select>
+          <input #profileNameInput *ngIf="isEdittingProfile || isAddingProfile" type="text" class="form-control form-control-sm" [(ngModel)]="editableProfileName">
+        <button *ngIf="!isAddingProfile && !isEdittingProfile" class="btn btn-success btn-sm flex-grow-1" style="text-wrap: nowrap;" (click)="newProfile()">
+          New profile
+        </button>
+        <button *ngIf="isAddingProfile" [disabled]="!editableProfileName" class="btn btn-success btn-sm flex-grow-1" style="text-wrap: nowrap;" (click)="saveNewProfile()">
+          Save new profile
+        </button>
+        <button [disabled]="!selectedProfile" *ngIf="!isAddingProfile && !isEdittingProfile" class="btn btn-success btn-sm flex-grow-1" style="text-wrap: nowrap;" (click)="editProfile()">
+          Edit profile name
+        </button>
+        <button *ngIf="isEdittingProfile" [disabled]="!editableProfileName" class="btn btn-success btn-sm flex-grow-1" style="text-wrap: nowrap;" (click)="saveEditProfile()">
+          Save edit
+        </button>
+        <button *ngIf="!isAddingProfile && !isEdittingProfile" [disabled]="!selectedProfile" class="btn btn-danger btn-sm flex-grow-1" style="text-wrap: nowrap;" (click)="deleteProfile()">
+          Delete
+        </button>
+        <button *ngIf="isAddingProfile || isEdittingProfile" class="btn btn-secondary btn-sm flex-grow-1" (click)="cancelEdit()">Cancel</button>
+      </div>
       <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="openOnSaveInput" [(ngModel)]="openFileOnSave">
         <label class="form-check-label" for="openOnSaveInput">
@@ -44,3 +65,19 @@
   </div>
 
 </app-shell>
+
+
+<ng-template #confirmDeleteModal let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">Confirm</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+	</div>
+	<div class="modal-body">
+    <p>Are you sure you want to delete this profile?</p>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-danger" (click)="modal.close()">DELETE</button>
+	</div>
+</ng-template>
+
+<!-- <button class="btn btn-lg btn-outline-primary" (click)="onModalOpen(content)">Launch demo modal</button> -->

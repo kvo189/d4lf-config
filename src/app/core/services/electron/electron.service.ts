@@ -77,23 +77,19 @@ export class ElectronService {
   }
 
   async saveProfile(fileName: string, yamlString: string): Promise<boolean> {
-    try {
-      const result = await this.ipcRenderer.invoke('write-profile', fileName, yamlString);
-      return result.success;
-    } catch (error) {
-      console.error('Error saving profile:', error);
-      throw error;
-    }
+    return await this.ipcRenderer.invoke('write-profile', fileName, yamlString);
+  }
+
+  async saveProfileName(oldName: string | undefined, newName: string) {
+    return await this.ipcRenderer.invoke('save-profile-name', oldName, newName);
   }
 
   async openProfile(name: string) {
-    try {
-      const result = await this.ipcRenderer.invoke('open-saved-file', name);
-      return result.success;
-    } catch (error) {
-      console.error('Error saving profile:', error);
-      throw error;
-    }
+    return await this.ipcRenderer.invoke('open-saved-file', name);
+  }
+
+  async deleteProfile(name: string) {
+    return await this.ipcRenderer.invoke('delete-profile', name);
   }
 
   async launchD4LF() {

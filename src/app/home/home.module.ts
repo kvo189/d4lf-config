@@ -15,6 +15,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { AspectEditorComponent } from './components/profiles-editor/aspect-editor/aspect-editor.component';
 import { AffixesEditorComponent } from './components/profiles-editor/affixes-editor/affixes-editor.component';
 import { UniquesEditorComponent } from './components/profiles-editor/uniques-editor/uniques-editor.component';
+import { ClickOutsideDirective } from '../shared/directives/ClickOutsideDirective';
 
 @NgModule({
     declarations: [
@@ -22,7 +23,8 @@ import { UniquesEditorComponent } from './components/profiles-editor/uniques-edi
         ProfilesEditorComponent,
         AspectEditorComponent,
         AffixesEditorComponent,
-        UniquesEditorComponent
+        UniquesEditorComponent,
+        ClickOutsideDirective
     ],
     imports: [
         CommonModule,

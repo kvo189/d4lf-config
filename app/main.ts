@@ -110,6 +110,36 @@ ipcMain.handle('write-profile', async (event, fileName, yamlString) => {
   }
 });
 
+ipcMain.handle('save-profile-name', async (event, oldName: string | undefined, newName: string) => {
+  const oldFilePath = path.join(profilesDir, `${oldName}.yaml`); // Adjust file extension/format if needed
+  const newFilePath = path.join(profilesDir, `${newName}.yaml`);
+
+  try {
+    if (!oldName) {
+      await fs.promises.writeFile(newFilePath, ''); // Create an empty file or with default content
+      return;
+    }
+
+    // Check if the old file exists
+    await fs.promises.access(oldFilePath);
+
+    // Rename the file
+    await fs.promises.rename(oldFilePath, newFilePath);
+  } catch (error) {
+    if ((error as any)?.code === 'ENOENT') {
+      // File does not exist, create a new file
+      await fs.promises.writeFile(newFilePath, ''); // Create an empty file or with default content
+    } else {
+      throw error; // Rethrow other errors to be handled in the renderer process
+    }
+  }
+});
+
+ipcMain.handle('delete-profile', async (event, profileName) => {
+  const profilePath = path.join(profilesDir, `${profileName}.yaml`); // Assuming profiles are stored as JSON files
+  return await fs.promises.unlink(profilePath); // Delete the profile file
+});
+
 ipcMain.handle('launch-d4lf', async (event) => {
   try {
     let d4lfPath = path.resolve('.', 'd4lf.exe');
