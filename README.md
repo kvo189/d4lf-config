@@ -3,6 +3,8 @@
 
 Config tool for D4 Loot Filter: https://github.com/aeon0/d4lf
 
+![Alt text](/src/assets/thumbnail.png)
+
 
 ## Features
 - Modify settings in the **params.ini** file located in **%USERPROFILE%/.d4lf** folder.
