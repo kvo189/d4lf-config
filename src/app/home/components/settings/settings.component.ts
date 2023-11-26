@@ -41,6 +41,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
     })
   });
 
+  readonly tooltip = {
+    profiles: 'Which filter profiles should be run. All .yaml files with "Aspects" and "Affixes" sections will be used from (E.g. C:/Users/USERNAME/.d4lf/profiles/*.yaml)',
+    visionOnStart: 'Whether to run vision mode on startup or not',
+    checkChestTabs: 'How many tabs should be checked for items in chest. Note: All 5 Tabs must be unlocked!',
+    hiddenTransparency: 'Transparency of the overlay when not hovering it (has a 3 second delay after hovering). The "shown" transparncy is 0.94',
+    localPrefs: 'In case you get a warning about the LocalPref file not being found, you can either ignore the warning, or specify the correct path for your system here.'
+  }
+
 
   @ViewChild('confirmResetModal', { static: false }) private confirmResetModal: NgbModal | undefined;
 

@@ -7,7 +7,7 @@
         <ng-template ngbNavContent>
           <div formGroupName="general" class="form-group-container">
             <div class="form-group">
-              <label for="profile">Profiles</label>
+              <label for="profile">Profiles<i class="ph ph-info tooltip-icon" ngbTooltip="{{tooltip.profiles}}"></i></label>
               <ng-select
                 labelForId="profile"
                 class="bootstrap"
@@ -24,19 +24,19 @@
               </ng-select>
             </div>
             <div class="form-group">
-              <label>Check Chest Tabs</label>
+              <label>Check Chest Tabs<i class="ph ph-info tooltip-icon" ngbTooltip="{{tooltip.checkChestTabs}}"></i></label>
               <input formControlName="check_chest_tabs" type="number" class="form-control" min="0" max="5">
             </div>
             <div class="form-group">
-              <label>Hidden Transparency</label>
+              <label>Hidden Transparency<i class="ph ph-info tooltip-icon" ngbTooltip="{{tooltip.hiddenTransparency}}"></i></label>
               <input formControlName="hidden_transparency" type="number" class="form-control">
             </div>
             <div class="form-group">
-              <label>Local Prefs Path</label>
+              <label>Local Prefs Path<i class="ph ph-info tooltip-icon" ngbTooltip="{{tooltip.localPrefs}}"></i></label>
               <input formControlName="local_prefs_path" class="form-control">
             </div>
             <div class="form-group">
-              <label >Run Vision Mode on Startup?</label>
+              <label >Run Vision Mode on Startup?<i class="ph ph-info tooltip-icon" ngbTooltip="{{tooltip.visionOnStart}}"></i></label>
               <input type="checkbox" formControlName="run_vision_mode_on_startup" class="form-check-input">
             </div>
           </div>
