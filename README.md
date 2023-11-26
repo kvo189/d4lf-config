@@ -1,22 +1,20 @@
 
 # Introduction
 
-Bootstrap and package your project with Angular 16 and Electron 25 (Typescript + SASS + Hot Reload) for creating Desktop applications.
+Config tool for D4 Loot Filter: https://github.com/aeon0/d4lf
 
-Currently runs with:
 
-- Angular v16.1.3
-- Electron v25.2.0
+## Features
+- Modify settings in the **params.ini** file located in **%USERPROFILE%/.d4lf** folder.
+- Create and modify new and existing filter profiles files (.yaml) located in **%USERPROFILE%/.d4lf/profiles**.
+- Aspects & Affixes editor - manipulate the aspect keys, threshold, and condition values.
+- Affixes editor - Specify the item type(s), minimum item power, and minimum affix count for each item group.
+- Autocomplete - suggest what aspect/affix the user wants to enter into the input field.
+- Uniques editor - I'll work on this at some point.
 
-With this sample, you can:
-
-- Run your app in a local development environment with Electron & Hot reload
-- Run your app in a production environment
-- Package your app into an executable file for Linux, Windows & Mac
-
-/!\ Hot reload only pertains to the renderer process. The main electron process is not able to be hot reloaded, only restarted.
-
-/!\ Angular CLI & Electron Builder needs Node 18.10 or later to work correctly.
+## Usage
+- Download the latest version from [releases](https://github.com/kvo189/d4lf-config/releases). You only need to download either the standable .exe or .zip file (**d4lf-config.x.x.x.exe** OR **d4lf-config.x.x.x.zip**)
+- For the **Launch D4LF** action to work correctly, ensure that **d4lf.exe** script and it's associated files are in the same directory as **d4lf-config.exe**.
 
 
 ## To build for development
@@ -45,4 +43,4 @@ You can disable "Developer Tools" by commenting `win.webContents.openDevTools();
 | `npm run electron:local` | Builds your application and start electron locally                                                    |
 | `npm run electron:build` | Builds your application and creates an app consumable based on your operating system                  |
 
-**Your application is optimised. Only /dist folder and NodeJS dependencies are included in the final bundle.**
+

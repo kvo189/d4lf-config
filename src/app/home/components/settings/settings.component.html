@@ -103,7 +103,7 @@
   <div class="buttons-container">
     <button class="btn btn-primary" [disabled]="settingsForm.pristine" (click)="saveSettings()">Save</button>
     <button class="btn btn-secondary" [disabled]="settingsForm.pristine" (click)="cancelChanges()">Cancel</button>
-    <button type="button" class="btn btn-warning" (click)="resetSettings()">Reset settings</button>
+    <button type="button" class="btn btn-warning" (click)="resetSettings()" ngbTooltip="Profiles will be set to all profile files in %USERPROFILE%/.d4lf/profiles " >Reset settings</button>
   </div>
 </app-shell>
 
