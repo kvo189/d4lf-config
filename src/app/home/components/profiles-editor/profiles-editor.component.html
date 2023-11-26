@@ -18,7 +18,29 @@
       </div>
     </div>
 
-    <app-aspect-editor [aspects]="aspects$|async" (save)="onAspectsSave($event)"></app-aspect-editor>
+    <div>
+      <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav-tabs">
+        <li [ngbNavItem]="'aspects'">
+          <button ngbNavLink>Aspects</button>
+          <ng-template ngbNavContent>
+            <app-aspect-editor [aspects]="aspects$|async" (save)="onAspectsSave($event)"></app-aspect-editor>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="'affixes'">
+          <button ngbNavLink>Affixes</button>
+          <ng-template ngbNavContent>
+            <app-affixes-editor [itemGroups]="itemGroups$|async" (save)="onAffixesSave($event)"></app-affixes-editor>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="'uniques'">
+          <button ngbNavLink>Uniques</button>
+          <ng-template ngbNavContent>
+            <app-uniques-editor></app-uniques-editor>
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="nav" class=""></div>
+    </div>
   </div>
 
 </app-shell>

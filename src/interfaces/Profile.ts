@@ -57,7 +57,6 @@ export interface Unique {
 export type Affix = [string] | [string, number] | [string, number, AffixCondition];
 export type AffixCondition = 'smaller' | 'larger';
 
-
 export const ItemType = {
   // Armor
   Helm: "helm",

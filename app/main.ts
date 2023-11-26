@@ -106,7 +106,21 @@ ipcMain.handle('write-profile', async (event, fileName, yamlString) => {
     await writeYamlFile(path.join(profilesDir, fileName), yamlString);
     return { success: true };
   } catch (error) {
-    return { success: false, error: (error as Error).message };
+    throw error;
+  }
+});
+
+ipcMain.handle('launch-d4lf', async (event) => {
+  try {
+    let d4lfPath = path.resolve('.', 'd4lf.exe');
+    const portablePath = process.env.PORTABLE_EXECUTABLE_DIR;
+    if (portablePath) {
+      d4lfPath = path.join(portablePath, 'd4lf.exe');
+    }
+    // Check if the file exists
+    await openFile(d4lfPath);
+  } catch (error) {
+    throw error;
   }
 });
 
@@ -115,7 +129,7 @@ ipcMain.handle('open-saved-file', async (event, fileName) => {
     await openFile(path.join(profilesDir, fileName));
     return { success: true };
   } catch (error) {
-    return { success: false, message: (error as Error).message };
+    throw error;
   }
 });
 

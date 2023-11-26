@@ -13,12 +13,16 @@ import { ProfilesEditorComponent } from './components/profiles-editor/profiles-e
 import { ShellComponent } from "../shared/components/shell/shell.component";
 import { SettingsComponent } from './components/settings/settings.component';
 import { AspectEditorComponent } from './components/profiles-editor/aspect-editor/aspect-editor.component';
+import { AffixesEditorComponent } from './components/profiles-editor/affixes-editor/affixes-editor.component';
+import { UniquesEditorComponent } from './components/profiles-editor/uniques-editor/uniques-editor.component';
 
 @NgModule({
     declarations: [
         SettingsComponent,
         ProfilesEditorComponent,
-        AspectEditorComponent
+        AspectEditorComponent,
+        AffixesEditorComponent,
+        UniquesEditorComponent
     ],
     imports: [
         CommonModule,

@@ -1,1 +1,90 @@
-<p>affixes-editor works!</p>,
+
+<div class="d-flex form-container">
+  <div class="left-panel">
+    <div class="d-flex gap-1">
+      <button class="btn btn-sm btn-success flex-grow-1" (click)="addItemGroup()">Add</button>
+      <button class="btn btn-sm btn-danger  flex-grow-1" [disabled]="selectedItemGroupIndex === null" (click)="deleteItemGroup(selectedItemGroupIndex!)">
+        Delete
+      </button>
+    </div>
+
+    <div *ngFor="let group of itemGroupsArray.controls; let i = index" class="d-flex gap-2">
+      <button class="btn btn-sm flex-grow-1" (click)="selectItemGroup(i)" [ngClass]="{'btn-primary': selectedItemGroupIndex === i, 'btn-secondary': selectedItemGroupIndex !== i}">
+        {{group.get('key')?.value}}
+      </button>
+    </div>
+  </div>
+
+  <div class="right-panel" *ngIf="selectedItemGroupIndex !== null">
+    <ng-container *ngIf="getFormGroup(itemGroupsArray.at(selectedItemGroupIndex)) as itemFormGroup">
+
+      <div [formGroup]="itemFormGroup" class="d-flex flex-column pb-3">
+        <label for="">Item group name</label>
+        <input class="form-control form-control-sm"  formControlName="key" placeholder="Item group name">
+      </div>
+
+      <div *ngIf="getFormGroup(itemFormGroup.get('item')) as itemFormGroupItem" [formGroup]="itemFormGroupItem" class="d-flex flex-column gap-3">
+        <div class="d-flex gap-2">
+          <div class="d-flex flex-column" style="min-width: 50%;">
+            <div>Item type</div>
+            <ng-select
+              labelForId="itemType-select"
+              class="bootstrap"
+              [items]="itemTypesArray"
+              bindLabel="key"
+              bindValue="value"
+              [multiple]="true"
+              [closeOnSelect]="false"
+              formControlName="itemType"
+            >
+              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{index}}" type="checkbox" [checked]="item$.selected" /> {{item.value}}
+              </ng-template>
+            </ng-select>
+          </div>
+
+          <div class="d-flex flex-column" style="min-width: 20%;">
+            <div>Min power</div>
+            <input class="form-control" type="number" formControlName="minPower" placeholder="Minimum Power">
+          </div>
+
+          <div class="d-flex flex-column" style="min-width: 20%;">
+            <div>Min affix count</div>
+            <input class="form-control" type="number" formControlName="minAffixCount" placeholder="Minimum Affix Count">
+          </div>
+        </div>
+
+        <div class="d-flex flex-column gap-1" formArrayName="affixPool">
+          <div class="d-flex justify-content-between align-items-end">
+            <div>Affix pool</div>
+            <button class="btn btn-sm btn-success" (click)="addAffixToGroup()">New Affix</button>
+          </div>
+          <div *ngFor="let affixControl of getFormArray(itemFormGroupItem.get('affixPool'))?.controls; let j = index" [formGroupName]="j" class="d-flex gap-1">
+            <input class="form-control form-control-sm" formControlName="key" placeholder="Affix Key">
+            <input class="form-control form-control-sm" type="number" formControlName="threshold" placeholder="Threshold"  style="min-width: 20%;">
+
+            <select class="form-control form-control-sm" formControlName="condition">
+              <option value="">Select condition</option>
+              <option value="larger">larger</option>
+              <option value="smaller">smaller</option>
+            </select>
+            <button type="button" class="btn btn-danger btn-sm" aria-label="Close" (click)="deleteAffixFromGroup(j)">X</button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+
+  </div>
+</div>
+
+<div class="d-flex justify-content-between pt-2">
+  <div class="d-flex gap-2">
+    <button class="btn btn-sm btn-primary" (click)="onSave()" [disabled]="affixesForm.pristine">Save</button>
+    <button class="btn btn-sm btn-secondary" (click)="onCancel()" [disabled]="affixesForm.pristine">
+      Cancel
+    </button>
+  </div>
+  <div>
+  </div>
+</div>

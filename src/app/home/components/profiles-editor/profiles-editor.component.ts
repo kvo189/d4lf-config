@@ -2,7 +2,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ChangeDetectionStrategy, Component, OnDestroy, type OnInit } from '@angular/core';
 import { log } from 'console';
 import { BehaviorSubject, combineLatest, map, Observable, shareReplay, Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { Aspect, Profile } from '../../../../interfaces/Profile';
+import { Aspect, ItemGroup, Profile } from '../../../../interfaces/Profile';
 import { FileService } from '../../../core/services/file/file.service';
 import { LogService } from '../../../core/services/log/log.service';
 
@@ -41,7 +41,30 @@ export class ProfilesEditorComponent implements OnInit, OnDestroy {
       return profiles.find(p => p.fileName === profileName)?.content?.Aspects || [];
     }),
     takeUntil(this.destroy$),
+  );
+
+  itemGroups$: Observable<ItemGroup[]> = combineLatest([
+    this.selectedProfile$,
+    this.profiles$,
+  ]).pipe(
+    map(([profileName, profiles]) => {
+      if (!profileName) {
+        return [] as ItemGroup[];
+      }
+      return profiles.find(p => p.fileName === profileName)?.content?.Affixes || [];
+    }),
+    tap(itemGroups => {
+      itemGroups.forEach(itemGroup => {
+        Object.entries(itemGroup).forEach(([key, item]) => {
+          console.log('item', key, item)
+        })
+      })
+    }),
+    takeUntil(this.destroy$),
   )
+
+
+  activeTabId: 'aspects' | 'affixes' | 'uniques' = 'aspects' ;
 
   constructor(
     private file: FileService,
@@ -72,13 +95,20 @@ export class ProfilesEditorComponent implements OnInit, OnDestroy {
 
   onAspectsSave(aspects: Aspect[]) {
     const selectedProfile = this._selectedProfile.value;
-
     if (!selectedProfile) {
       this.log.error('No profile selected');
       return;
     }
-
     this.file.saveProfile(selectedProfile, { Aspects: aspects }, { openOnSave: this.openFileOnSave });
+  }
+
+  onAffixesSave(itemGroups: ItemGroup[]) {
+    const selectedProfile = this._selectedProfile.value;
+    if (!selectedProfile) {
+      this.log.error('No profile selected');
+      return;
+    }
+    this.file.saveProfile(selectedProfile, { Affixes: itemGroups }, { openOnSave: this.openFileOnSave });
   }
 
 }

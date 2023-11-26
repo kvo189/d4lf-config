@@ -3,9 +3,10 @@ import { Injectable } from '@angular/core';
 
 // If you import a module but never use any of the imported values other than as TypeScript types,
 // the resulting javascript file will look as if you never imported the module at all.
-import { ipcRenderer, webFrame, shell } from 'electron';
+import { ipcRenderer, webFrame, shell, app, } from 'electron';
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable({
   providedIn: 'root'
@@ -72,12 +73,7 @@ export class ElectronService {
   }
 
   async readProfiles(): Promise<any[]> {
-    try {
-      return await this.ipcRenderer.invoke('read-profiles');
-    } catch (error) {
-      console.error('Error reading profiles:', error);
-      throw error;
-    }
+    return await this.ipcRenderer.invoke('read-profiles');
   }
 
   async saveProfile(fileName: string, yamlString: string): Promise<boolean> {
@@ -98,5 +94,9 @@ export class ElectronService {
       console.error('Error saving profile:', error);
       throw error;
     }
+  }
+
+  async launchD4LF() {
+    return await this.ipcRenderer.invoke('launch-d4lf');
   }
 }

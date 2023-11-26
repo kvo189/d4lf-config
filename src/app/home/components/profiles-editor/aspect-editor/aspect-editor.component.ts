@@ -13,7 +13,7 @@ export class AspectEditorComponent implements OnChanges {
   });
 
   @Output() save = new EventEmitter<Aspect[]>();
-  @Input() aspects!: Aspect[] | null;
+  @Input({ required: true }) aspects!: Aspect[] | null;
 
   private initialAspects: Aspect[] = []; // Store the initial state of the aspects
 

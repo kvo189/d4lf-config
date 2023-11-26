@@ -10,6 +10,13 @@ body {
   background-color: #231f20;
 }
 
+.form-container {
+  height: max(50vh, 200px);
+  overflow: auto;
+  border: 1px solid var(--bs-border-color);
+  border-top: none;
+}
+
 .container {
   height: calc(100%);
 }

@@ -11,16 +11,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.openFile = void 0;
 const { shell } = require('electron');
+const fs = require('fs').promises; // Use promises API for simpler async handling
 function openFile(filePath) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            yield fs.access(filePath);
             const result = yield shell.openPath(filePath);
             if (result) {
                 console.error('Error opening file:', result);
+                throw new Error(`Error opening file ${result}`);
             }
         }
         catch (error) {
             console.error('Failed to open file:', error);
+            throw error;
         }
     });
 }

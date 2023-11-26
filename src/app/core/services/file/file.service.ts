@@ -26,7 +26,7 @@ export class FileService {
   private _settings: BehaviorSubject<Settings | undefined> = new BehaviorSubject<Settings | undefined>(undefined);
   settings$ = this._settings.asObservable().pipe(shareReplay(1));
 
-  private _saveProfileEvent= new Subject<{ event: 'success' | 'error', fileName: string }>();
+  private _saveProfileEvent = new Subject<{ event: 'success' | 'error', fileName: string }>();
   saveProfileEvent$ = this._saveProfileEvent.asObservable();
 
   constructor(
@@ -88,7 +88,7 @@ export class FileService {
       this._profileNames.next(profileFiles);
       this._profiles.next(profiles as Profile[]);
       console.log('Profiles detailed', profiles);
-      this.log.info(`${profileFiles.length} Profiles found`, { data: profileFiles, toast: 'success' });
+      this.log.info(`${profileFiles.length} Profiles found`, { data: profileFiles });
     }).catch(error => {
       this.log.error(`Error reading profiles`, { data: error, toast: 'error' });
     });
@@ -117,6 +117,14 @@ export class FileService {
     }).catch(error => {
       this.log.error(`Error saving profile`, { data: error, toast: 'error' });
     });
+  }
+
+  launchD4LF() {
+    this.electronService.launchD4LF().then(() => {
+      this.log.info(`D4LF launched`, { toast: 'success' });
+    }).catch(error => {
+      this.log.error(`Error launching D4LF`, { data: error, toast: 'error' });
+    })
   }
 
   get profiles(): Profile[] {
